@@ -46,7 +46,7 @@ def login_request(request):
             return redirect('djangoapp:dealerdetails')
         else:
             # If not, return to login page again
-            return render(request, 'djangoapp/dealer_details.html', context)
+            return render(request, 'djangoapp/index.html', context)
     else:
         return render(request, 'djangoapp/index.html', context)
 
@@ -58,7 +58,7 @@ def logout_request(request):
     # Logout user in the request
     logout(request)
     # Redirect user back to course list view
-    return redirect('djangoapp:dealer_details')
+    return redirect('djangoapp:index')
 
 
 # Create a `registration_request` view to handle sign up request
