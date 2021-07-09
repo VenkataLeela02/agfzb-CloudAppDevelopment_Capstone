@@ -1,10 +1,10 @@
   applications:
-  - name: dealerreview
+  - name: dealerreviewapp
     routes:
       - route: aleelatejadjangoapp.eu-gb.mybluemix.net
     memory: 128M
     buildpack: python_buildpack
-  - name: dealerreview-nginx
+  - name: dealerreviewapp-nginx
     routes:
       - route: aleelatejadjangoapp.eu-gb.mybluemix.net/static
     memory: 128M
