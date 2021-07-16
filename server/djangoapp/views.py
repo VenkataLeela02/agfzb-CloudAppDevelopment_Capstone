@@ -89,6 +89,7 @@ def registration_request(request):
             user = User.objects.create_user(username=username, password=password)
             # <HINT> Login the user and 
             # redirect to course list page
+            login(request, user)
             return redirect("djangoapp:dealerdetails")
         else:
             return render(request, 'djangoapp/registration.html', context)
