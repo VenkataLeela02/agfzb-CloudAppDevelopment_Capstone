@@ -43,13 +43,13 @@ def login_request(request):
         if user is not None:
             # If user is valid, call login method to login current user
             login(request, user)
-            return redirect('djangoapp:index')
+            return redirect('djangoapp:about')
         else:
             # If not, return to login page again
             context['message'] = "Invalid username or password."
             return render(request, 'djangoapp/index.html', context)
     else:
-        return render(request, 'djangoapp/index.html', context)
+        return render(request, 'djangoapp/about.html', context)
 
 
 # Create a `logout_request` view to handle sign out request
@@ -87,8 +87,7 @@ def registration_request(request):
         # If it is a new user
         if not user_exist:
             # Create user in auth_user table
-            user = User.objects.create_user(username=username, first_name=first_name, last_name=last_name,
-                                            password=password)
+            user = User.objects.create_user(username=username, password=password)
             # <HINT> Login the user and 
             # redirect to course list page
             login(request, user)
