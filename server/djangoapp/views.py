@@ -9,6 +9,9 @@ from django.contrib import messages
 from datetime import datetime
 import logging
 import json
+from urllib.request import urlopen
+import requests
+from django.http import JsonResponse
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
@@ -99,13 +102,28 @@ def registration_request(request):
 # Update the `get_dealerships` view to render the index page with a list of dealerships
 def get_dealerships(request):
     if request.method == "GET":
-        url = "https://5c9b4752.eu-gb.apigw.appdomain.cloud/api/dealerships"
+        url = "https://78b7a8fd.eu-gb.apigw.appdomain.cloud/api/dealerships/dealer-get"
         # Get dealers from the URL
         dealerships = get_dealers_from_cf(url)
         # Concat all dealer's short name
-        dealer_names = ' , '.join([dealer.short_name for dealer in dealerships])
+        #dealer_names = ' , '.join([dealer.short_name for dealer in dealerships])
         # Return a list of dealer short name
-        return HttpResponse(dealer_names)
+        r = requests.get('https://78b7a8fd.eu-gb.apigw.appdomain.cloud/api/dealerships/')
+        q = r.json()
+        dealerships = q["docs"]
+        dealer_list = []
+        for dealer in dealerships:
+            dealer_list.append(dealer["full_name"])
+        #dealer_names = ' , '.join([dealer.short_name for dealer in dealerships])
+        #dealerships["docs"].responseText.short_name
+        #response_dict = json.loads(dealerships.text)
+        state = "CA"
+        res = requests.get('https://78b7a8fd.eu-gb.apigw.appdomain.cloud/api/dealerships/dealer-get?state='+state)
+        dealerships_by_state = res.json()["docs"]
+        dealerList_state = []
+        for dealer_by_state in dealerships_by_state:
+                dealerList_state.append(dealer_by_state["full_name"])
+        return HttpResponse(dealerList_state)
 
 # Create a `get_dealer_details` view to render the reviews of a dealer
 # def get_dealer_details(request, dealer_id):
