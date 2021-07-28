@@ -10,40 +10,63 @@
     <body>
 
     <!--Add a nav bar here -->
-        <nav class="navbar navbar-light bg-primary">
-    <div class="container-fluid">
-        <div class="navbar-header">
-              <a class="navbar-brand mt-1 text-white" href="{% url 'djangoapp:index' %}">Dealership Review</a>
-              <div class="navbar float-right">
+        <nav class="navbar navbar-expand-md navbar-dark bg-primary pl-0 py-3">
+            <div class="container-fluid">
+            <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item active">
+                <a class="navbar-brand text-white" href="{% url 'djangoapp:index' %}">Dealership Review</a>
+                </li>
+                <li class="nav-item">
                 <a class="btn  btn-primary" href="{% url 'djangoapp:index' %}">Home</a>
+                </li>
+                <li class="nav-item">
                 <a class="btn  btn-primary" href="{% url 'djangoapp:about' %}">About</a>
+                </li>
+                <li class="nav-item">
                 <a class="btn  btn-primary" href="{% url 'djangoapp:contact' %}">Contact</a>
-              </div>
-              <ul class="nav navbar-nav navbar-right">
-                    {% if user.is_authenticated %}
-                    <li>
-                        <a class="btn btn-link" href="#">{{ user.first_name }}({{ user.username }})</a>
-                        <a class="btn btn-link" href="{% url 'djangoapp:index' %}">Logout</a>
-                    </li>
-                    {% else %}
-                    <li>
-                        <form class="form-inline" action="{% url 'djangoapp:dealerdetails' %}" method="post">
-                            {% csrf_token %}
-                            <div class="input-group">
-                                <input type="text" class="form-control" placeholder="Username" name="username" >
-                                <input type="password" class="form-control" placeholder="Password" name="psw" >
-                                <button class="btn btn-primary" type="submit">Login</button>
-                                <a class="btn btn-link text-white" href="{% url 'djangoapp:registration' %}">Sign Up</a>
-                            </div>
-                        </form>
-                    </li>
-                    {% endif %}
-                </ul>
+                </li>
+            </ul>
+            </div>
+            <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
+            <ul class="navbar-nav ml-auto">
+                {% if user.is_authenticated %}
+                            <li>
+                                <a class="btn btn-link text-white" href="#">{{ user.first_name }}({{ user.username }})</a>
+                                <a class="btn btn-link text-white" href="{% url 'djangoapp:index' %}">Logout</a>
+                                <a class="btn btn-link text-white" href="{% url 'djangoapp:addreview' 1 %}">Add Review</a>
+                            </li>
+                {% else %}
+                            <li>
+                                <form class="form-inline" action="{% url 'djangoapp:dealerdetails' %}" method="post">
+                                    {% csrf_token %}
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" placeholder="Username" name="username" >
+                                        <input type="password" class="form-control" placeholder="Password" name="psw" >
+                                        <button class="btn btn-primary" type="submit">Login</button>
+                                        <a class="btn btn-link text-white" href="{% url 'djangoapp:registration' %}">Sign Up</a>
+                                    </div>
+                                </form>
+                            </li>
+                {% endif %}
+            </ul>
+            </div>
         </div>
-    </div>
     </nav>
-    dealerdetails
+    
     <!-- Add reviews as cards -->
+    {% for review in reviews %}
+    Reviews for <h3>{{review.name}}</h3>
+    <div class="card" style="width: 18rem;">
+        <img class="card-img-left">
+        <div class="card-body">
+            <h5 class="card-title">Car Model: {{review.car_model}}</h5>
+            <h5 class="card-title">Car Make: {{review.car_make}}</h5>
+            <h5 class="card-title">Year: {{review.car_year}}</h5>
+            <h5 class="card-text">Review: {{review.review}}</h5>
+        </div> 
+    </div>
+    {% endfor %}
     </body>
 <footer class="fixed-bottom bg-primary text-center text-lg-start">
     <div class="text-center p-1">
