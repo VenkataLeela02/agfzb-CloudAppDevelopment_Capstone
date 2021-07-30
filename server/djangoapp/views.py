@@ -100,7 +100,7 @@ def registration_request(request):
 def get_dealerships(request):
     if request.method == "GET":
         
-        url = "https://78b7a8fd.eu-gb.apigw.appdomain.cloud/api/dealerships/dealer-get"
+        url = "https://1065db83.eu-gb.apigw.appdomain.cloud/api/dealerships/dealer-get"
         # Get dealers from the URL
         context = {}
         dealerships = get_dealers_from_cf(url)
@@ -110,14 +110,14 @@ def get_dealerships(request):
         context = {'dealerships' : dealerships }
         # Return a list of dealer short name
         state = "CA"
-        url_state = "https://78b7a8fd.eu-gb.apigw.appdomain.cloud/api/dealerships/dealer-get?state="+state
+        url_state = "https://1065db83.eu-gb.apigw.appdomain.cloud/api/dealerships/dealer-get?state="+state
 
         dealerships_by_state = get_dealer_by_state_from_cf(url, state=state)
 
         dealer_names_by_state = ' , '.join([dealer.short_name for dealer in dealerships_by_state])
         
         
-        url_reviews = "https://78b7a8fd.eu-gb.apigw.appdomain.cloud/api/reviews" 
+        url_reviews = "https://1065db83.eu-gb.apigw.appdomain.cloud/api/reviews" 
 
         #reviews = get_dealer_reviews_from_cf(url_reviews, dealerId=dealerId)
 
@@ -128,11 +128,16 @@ def get_dealerships(request):
 def get_dealer_details(request, dealer_id):
     if request.method == "GET":
         context = {}
-        url = "https://78b7a8fd.eu-gb.apigw.appdomain.cloud/api/reviews?id="+ str(dealer_id)
+        url = "https://1065db83.eu-gb.apigw.appdomain.cloud/api//reviews?id="+ str(dealer_id)
 
         reviews = get_dealer_reviews_from_cf(url, dealer_id=dealer_id)
 
-        context = {'reviews' : reviews }
+        url_for_dealers = "https://1065db83.eu-gb.apigw.appdomain.cloud/api/dealerships/dealer-get?id=" + str(dealer_id)
+
+        dealers = get_dealers_from_cf(url_for_dealers, dealer_id = dealer_id)
+
+        context = {'reviews' : reviews,
+        "dealers" : dealers }
 
         reviewsList = ' , '.join([review.review for review in reviews])
 
@@ -150,16 +155,48 @@ def get_dealer_details(request, dealer_id):
 
 def add_review(request, dealer_id):
     if request.method == "GET":
-        url = "https://78b7a8fd.eu-gb.apigw.appdomain.cloud/api/reviews?id="+ str(dealer_id)
+        url = "https://1065db83.eu-gb.apigw.appdomain.cloud/api/reviews?id=" + str(dealer_id)
 
         reviews = get_dealer_reviews_from_cf(url, dealer_id=dealer_id)
 
-        context = {'reviews' : reviews }
+        url_for_dealers = "https://1065db83.eu-gb.apigw.appdomain.cloud/api/dealerships/dealer-get?id=" + str(dealer_id)
+
+        dealer_by_id = get_dealers_from_cf(url_for_dealers, dealer_id = dealer_id)
+
+        context = {'reviews' : reviews,
+        "dealers" : dealer_by_id }
 
         reviewsList = ' , '.join([review.car_model for review in reviews])
 
-    
         return render(request, 'djangoapp/add_review.html', context)
     
-        #return HttpResponse(reviewsList)
+    if request.method == "POST":
+        # Get username and password from request.POST dictionary
+        username = request.POST['username']
+        password = request.POST['psw']
+        # Try to check if provide credential can be authenticated
+        user = authenticate(username=username, password=password)
+        if user is None:
+            context = {}
+            context = {'message' : "User does'nt exists."}
+            return redirect("djangoapp:index")
 
+        else:
+
+            context = {}
+            review = {
+                "time" : datetime.utcnow().isoformat(),
+                "dealership" : 1,
+                "review" : "This is a great service",
+                "name" : "name",
+                "purchase" : 2020
+            }
+
+            json_payload = { "review" : review }
+            
+            url = "https://1065db83.eu-gb.apigw.appdomain.cloud/api/reviews?id=" + str(dealer_id)
+            result = post_request(url, json_payload, dealer_id=dealer_id)
+            context = {"result" : result }
+
+        return render(request, 'djangoapp/dealerdetails.html', context)
+        
