@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Dealership Review</title>
     {% load static %}
+    <base href="/">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 </head>
 
@@ -33,14 +34,14 @@
                 {% if user.is_authenticated %}
                             <li>
                                 <a class="btn btn-link text-white" href="#">{{ user.first_name }}({{ user.username }})</a>
-                                <a class="btn btn-link text-white" href="{% url 'djangoapp:index' %}">Logout</a>
+                                <a class="btn btn-link text-white" href="{% url 'djangoapp:logout' %}">Logout</a>
                                 {% for dealer in dealers %}
                                 <a class="btn btn-link text-white" href="{% url 'djangoapp:addreview' dealer.id %}">Add Review</a>
                                 {% endfor %}
                             </li>
                 {% else %}
                             <li>
-                                <form class="form-inline" action="{% url 'djangoapp:index' %}" method="post">
+                                <form class="form-inline" action="{% url 'djangoapp:login' %}" method="post">
                                     {% csrf_token %}
                                     <div class="input-group">
                                         <input type="text" class="form-control" placeholder="Username" name="username" >
@@ -55,10 +56,11 @@
             </div>
         </div>
     </nav>
-    
+    {{results}}
     <!-- Add reviews as cards -->
     {% for review in reviews %}
     <p class="h2">Reviews for {{review.name}}</p>
+    
     <div class="card" style="width: 18rem;">
         <img class="card-img-left">
         <div class="card-body">

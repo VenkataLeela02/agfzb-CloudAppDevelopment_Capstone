@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     {% load static %}
+    <base href="/">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <meta charset="UTF-8">
     <title>Dealership Review</title>
@@ -38,11 +39,11 @@
                 {% if user.is_authenticated %}
                             <li>
                                 <a class="btn btn-link text-white" href="#">{{ user.first_name }}({{ user.username }})</a>
-                                <a class="btn btn-link text-white" href="{% url 'djangoapp:index' %}">Logout</a>
+                                <a class="btn btn-link text-white" href="{% url 'djangoapp:logout' %}">Logout</a>
                             </li>
                             {% else %}
                             <li>
-                                <form class="form-inline" action="{% url 'djangoapp:index' %}" method="post">
+                                <form class="form-inline" action="{% url 'djangoapp:login' %}" method="post">
                                     {% csrf_token %}
                                     <div class="input-group">
                                         <input type="text" class="form-control" placeholder="Username" name="username" >

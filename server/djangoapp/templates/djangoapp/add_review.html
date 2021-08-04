@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     {% load static %}
+    <base href="/">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/css/bootstrap-datepicker.css" rel="stylesheet">
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
@@ -35,11 +36,11 @@
                 {% if user.is_authenticated %}
                             <li>
                                 <a class="btn btn-link text-white" href="#">{{ user.first_name }}({{ user.username }})</a>
-                                <a class="btn btn-link text-white" href="{% url 'djangoapp:index' %}">Logout</a>
+                                <a class="btn btn-link text-white" href="{% url 'djangoapp:logout' %}">Logout</a>
                             </li>
                 {% else %}
                             <li>
-                                <form class="form-inline" action="{% url 'djangoapp:index' %}" method="post">
+                                <form class="form-inline" action="{% url 'djangoapp:login' %}" method="post">
                                     {% csrf_token %}
                                     <div class="input-group">
                                         <input type="text" class="form-control" placeholder="Username" name="username" >
@@ -59,23 +60,24 @@
         {% for dealer in dealers %}
         <p class="text-black h2">Add a review about {{dealer.full_name}}<p>
         <p class="h5">Enter the review content:<p>
-        <form action="{% url 'djangoapp:dealerdetails' dealer.id %}" method="post"> {% csrf_token %}
-        <textarea class="form-control" id="content" name="content" rows="2" style="width=10rem;" required></textarea><br>
-        <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked>
-        <p class="h5"> Has purchased the car from {{dealer.full_name}} ? <span class="text-muted">(select purchased car information below if checked)</span></p><br>
-        
-        <p class="h5">Select your car (model-make-year):<p>
-        <select name="car" id="car" class="form-select  h-100 w-50" required>
-            {% for review in reviews %}
-                <option selected>Open this select menu</option>
-                <option>{{review.car_model}}-{{review.car_make}}-{{ review.car_year}}</option>
-            {% endfor %}
-        </select>
-        <br>
-        <p class="h5">Select Your Purchase Date: <p>
-        <input class="date-own form-control" type="text" name="purchasedate" id="purchasedate" style="width:10em;">
-        <br>
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <form action="" method="post"> 
+            {% csrf_token %}
+            <textarea class="form-control" id="content" name="content" rows="2" style="width=10rem;" required></textarea><br>
+            <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked>
+            <p class="h5"> Has purchased the car from {{dealer.full_name}} ? <span class="text-muted">(select purchased car information below if checked)</span></p><br>
+            
+            <p class="h5">Select your car (model-make-year):<p>
+            <select name="car" id="car" class="form-select  h-100 w-50" required>
+                {% for review in reviews %}
+                    <option selected>Open this select menu</option>
+                    <option>{{review.car_model}}-{{review.car_make}}-{{ review.car_year}}</option>
+                {% endfor %}
+            </select>
+            <br>
+            <p class="h5">Select Your Purchase Date: <p>
+            <input class="date-own form-control" type="text" name="purchasedate" id="purchasedate" style="width:10em;">
+            <br>
+            <button type="submit" class="btn btn-primary">Submit</button>
         </form>
         {% endfor %}
         </div>
