@@ -60,7 +60,7 @@
         {% for dealer in dealers %}
         <p class="text-black h2">Add a review about {{dealer.full_name}}<p>
         <p class="h5">Enter the review content:<p>
-        <form action="" method="post"> 
+        <form action="{% url 'djangoapp:addreview' dealer.id %}" method="post"> 
             {% csrf_token %}
             <textarea class="form-control" id="content" name="content" rows="2" style="width=10rem;" required></textarea><br>
             <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked>
@@ -68,10 +68,10 @@
             
             <p class="h5">Select your car (model-make-year):<p>
             <select name="car" id="car" class="form-select  h-100 w-50" required>
-                {% for review in reviews %}
+                {% if reviews %}
                     <option selected>Open this select menu</option>
-                    <option>{{review.car_model}}-{{review.car_make}}-{{ review.car_year}}</option>
-                {% endfor %}
+                    <option>{{reviews.0.car_model}}-{{reviews.0.car_make}}-{{ reviews.0.car_year}}</option>
+                {% endif %}
             </select>
             <br>
             <p class="h5">Select Your Purchase Date: <p>

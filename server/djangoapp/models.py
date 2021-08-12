@@ -45,12 +45,12 @@ class CarModel(models.Model):
     def __str__(self):
         return "Car Model" + self.name + "," + \
         "Dealer ID: " + self.dealer_id + "," + \
-            "Choice of car: " + self.choice_of_cars + "," + \
-                "Year:" + self.year
+        "Choice of car: " + self.choice_of_cars + "," + \
+        "Year:" + self.year
 
 
 # <HINT> Create a plain Python class `CarDealer` to hold dealer data
-class CarDealer:
+class CarDealer(models.Model):
 
     def __init__(self, address, city, full_name, id, lat, long, short_name, st, zip):
         # Dealer address
@@ -77,7 +77,16 @@ class CarDealer:
 
 # <HINT> Create a plain Python class `DealerReview` to hold review data
 
-class DealerReview:
+class DealerReview(models.Model):
+    dealership = models.IntegerField(default=15)
+    name = models.CharField(max_length=255, default='Berkly Shepley')
+    review = models.CharField(max_length=255, default='Total grid-enabled service-desk')
+    purchase = models.CharField(max_length=255, default=True)
+    purchase_date = models.CharField(max_length=255, default='07/11/2020')
+    car_make = models.CharField(max_length=255,default='Audi')
+    car_model = models.CharField(max_length=255, default= 'A6')
+    car_year = models.CharField(max_length=255,default='2010')
+    id = models.IntegerField(primary_key=True)
 
     def __init__(self, dealership, name, review, purchase, purchase_date, car_make, car_model, car_year, id):
         self.dealership = dealership
@@ -91,6 +100,8 @@ class DealerReview:
         self.purchase_date = purchase_date
 
     def __str__(self):
-        return "Name:" + self.name + \
-        "Review:" + self.review 
+        return '%s %s %i %s %s %s %i %s %s' % (self.name, self.dealership, self.id, self.purchase, self.car_make,
+        self.car_model, self.car_year, self.review, self.purchase_date) 
+        
+        
     

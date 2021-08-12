@@ -1,13 +1,17 @@
+#from server.djangoapp.models import DealerReview
+from django.http.response import JsonResponse
+from djangoapp.models import DealerReview, CarDealer
 from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, render, redirect
 # from .models import related models
-from .restapis import get_dealers_from_cf, get_dealer_by_state_from_cf, get_dealer_reviews_from_cf,post_request
+from .restapis import get_dealers_from_cf, get_dealer_reviews_from_cf,post_request
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from datetime import datetime
 import logging
+import urllib
 import requests
 
 # Get an instance of a logger
@@ -92,6 +96,7 @@ def registration_request(request):
 # Update the `get_dealerships` view to render the index page with a list of dealerships
 def get_dealerships(request):
     context = {}
+
     url = "https://1065db83.eu-gb.apigw.appdomain.cloud/api/dealerships/dealer-get"
         # Get dealers from the URL
         
@@ -99,26 +104,10 @@ def get_dealerships(request):
         
     if request.method == "GET":
         
-        
-        # Concat all dealer's short name
-        #dealer_names = ' , '.join([dealer.short_name for dealer in dealerships])
         context = {'dealerships' : dealerships }
-        # Return a list of dealer short name
-        #state = "CA"
-        #url_state = "https://1065db83.eu-gb.apigw.appdomain.cloud/api/dealerships/dealer-get?state="+state
-
-        #dealerships_by_state = get_dealer_by_state_from_cf(url, state=state)
-
-        #dealer_names_by_state = ' , '.join([dealer.short_name for dealer in dealerships_by_state])
-        
-        
-        #url_reviews = "https://1065db83.eu-gb.apigw.appdomain.cloud/api/reviews" 
-
-        #reviews = get_dealer_reviews_from_cf(url_reviews, dealerId=dealerId)
-
+       
     return render(request, 'djangoapp/index.html', context)
-    #return HttpResponse(dealerships)
-
+   
 
 # Create a `get_dealer_details` view to render the reviews of a dealer
 
@@ -138,13 +127,8 @@ def get_dealer_details(request, dealer_id):
         context = {'reviews' : reviews,
         "dealers" : dealers }
 
-        #reviewsList = ' , '.join([review.review for review in reviews])
 
     return render(request, 'djangoapp/dealer_details.html', context)
-
-        #return HttpResponse(reviews)
-
-
 
 
 
@@ -165,36 +149,26 @@ def add_review(request, dealer_id):
         context = {'reviews' : reviews,
         "dealers" : dealer_by_id }
 
-        #reviewsList = ' , '.join([review.car_model for review in reviews])
+        return render(request, 'djangoapp/add_review.html', context)
+
+    if request.method == "GET":
+        url = "https://1065db83.eu-gb.apigw.appdomain.cloud/api/reviews?id=" + str(dealer_id)
+
+        reviews = get_dealer_reviews_from_cf(url, dealer_id=dealer_id)
+
+        url_for_dealers = "https://1065db83.eu-gb.apigw.appdomain.cloud/api/dealerships/dealer-get?id=" + str(dealer_id)
+
+        dealer_by_id = get_dealers_from_cf(url_for_dealers, dealer_id = dealer_id)
+
+        context = {'reviews' : reviews,
+        "dealers" : dealer_by_id }
 
         return render(request, 'djangoapp/add_review.html', context)
+
     
     if request.method == "POST":
-        # Get username and password from request.POST dictionary
-        
             
             context = {}
-            review = {
-                "time" : datetime.utcnow().isoformat(),
-                "dealership" : 1,
-                "review" : "This is a great service",
-                "name" : "name",
-                "purchase" : 2020
-            }
-
-            json_payload = { "review" : review }
-            
-            #url_for_reviews = "https://1065db83.eu-gb.apigw.appdomain.cloud/api/reviews?id=" + str(1)
-
-            #reviews = get_dealer_reviews_from_cf(url_for_reviews, dealer_id=dealer_id)
-
-            #url_for_dealers = "https://1065db83.eu-gb.apigw.appdomain.cloud/api/dealerships/dealer-get?id=" + str(1)
-
-            #dealer_by_id = get_dealers_from_cf(url_for_dealers, dealer_id = dealer_id)
-
-            url = "https://1065db83.eu-gb.apigw.appdomain.cloud/api/dealerships/dealer-get?id=" + str(dealer_id)  
-
-            result = post_request(url, json_payload, dealer_id=dealer_id)
             
             url_for_reviews = "https://1065db83.eu-gb.apigw.appdomain.cloud/api/reviews?id=" + str(dealer_id)
 
@@ -204,13 +178,31 @@ def add_review(request, dealer_id):
 
             dealers = get_dealers_from_cf(url_for_dealers, dealer_id = dealer_id)
 
-            context = { 'reviews' : reviews,
-        "dealers" : dealers,
-            "result" : result  }
+            json_payload = {
+                "time" : datetime.utcnow().isoformat(),
+                "name": reviews[0].name,
+                "dealership": reviews[0].dealership,
+                "review": request.POST.get('content'),
+                "purchase": reviews[0].purchase,
+                "purchase_date": reviews[0].purchase_date,
+                "car_make": reviews[0].car_make,
+                "car_model": reviews[0].car_model,
+                "car_year": reviews[0].car_year,
+                "id": reviews[0].id
+            }
 
-    #return render(request, 'djangoapp/dealerdetails.html', context)
-    return HttpResponse(result)
-        
+
+            url = "https://1065db83.eu-gb.apigw.appdomain.cloud/api/reviews?id=" + str(dealer_id) 
+
+            results = post_request(url, json_payload, dealer_id=dealer_id)
+
+            #reviews.append(results)
+
+            context = { 'reviews' : reviews,
+            "dealers" : dealers,
+            "results" : results }
+
+            return redirect('djangoapp:dealerdetails', dealer_id=dealer_id)
 
 
 

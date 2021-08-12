@@ -6,6 +6,12 @@
     {% load static %}
     <base href="/">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+    .card {
+        display: inline-block;
+    flex-direction: row;
+    }
+    </style>
 </head>
 
     <body>
@@ -56,14 +62,18 @@
             </div>
         </div>
     </nav>
-    {{results}}
+    
     <!-- Add reviews as cards -->
+    
+    {% if reviews.0 %}
+    <p class="h2">Reviews for {{reviews.0.name}}</p>
+    {% endif %}
+    
     {% for review in reviews %}
-    <p class="h2">Reviews for {{review.name}}</p>
     
     <div class="card" style="width: 18rem;">
         <img class="card-img-left">
-        <div class="card-body">
+        <div class="card-body float-right">
             <h5 class="card-title">Car Model: {{review.car_model}}</h5>
             <h5 class="card-title">Car Make: {{review.car_make}}</h5>
             <h5 class="card-title">Year: {{review.car_year}}</h5>

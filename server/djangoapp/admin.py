@@ -1,6 +1,6 @@
 from django.contrib import admin
 # from .models import related models
-from .models import CarMake, CarModel
+from .models import CarMake, CarModel, DealerReview
 
 # Register your models here.
 
@@ -19,6 +19,8 @@ class CarMakeAdmin(admin.ModelAdmin):
     list_filter = ['name']
     search_fields = ('name', 'description')
 
+
 # Register models here
 admin.site.register(CarModel, CarModelAdmin)
 admin.site.register(CarMake, CarMakeAdmin)
+admin.site.register(DealerReview)
