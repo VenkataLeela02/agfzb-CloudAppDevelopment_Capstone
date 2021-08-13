@@ -1,6 +1,7 @@
 from django.urls import path
 from django.conf.urls.static import static
 from django.conf import settings
+from django.contrib import admin
 from . import views
 
 app_name = 'djangoapp'
@@ -9,6 +10,7 @@ urlpatterns = [
     # view refers to the view function
     # name the URL
     #path(route='', view=views.)
+    path("admin/", admin.site.urls),
     # path for about view
     path('about/', view=views.get_about, name='about'),
 
