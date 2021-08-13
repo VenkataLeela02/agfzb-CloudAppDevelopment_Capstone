@@ -1,4 +1,5 @@
 #from server.djangoapp.models import DealerReview
+from django.contrib import auth
 from django.http.response import JsonResponse
 from djangoapp.models import DealerReview, CarDealer
 from django.shortcuts import render
@@ -167,6 +168,9 @@ def add_review(request, dealer_id):
 
     
     if request.method == "POST":
+
+        
+        if request.user.is_authenticated:
             
             context = {}
             
@@ -196,15 +200,16 @@ def add_review(request, dealer_id):
 
             results = post_request(url, json_payload, dealer_id=dealer_id)
 
-            #reviews.append(results)
-
             context = { 'reviews' : reviews,
             "dealers" : dealers,
             "results" : results }
 
             return redirect('djangoapp:dealerdetails', dealer_id=dealer_id)
 
+        else:
 
+            messages.error(request, 'Login Failed! Invalid username and password.')
+            return redirect('djangoapp:index') 
 
 
 
